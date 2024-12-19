@@ -38,7 +38,7 @@ jobs:
           script: |
             # Navigate to the app directory or clone the repo if it doesn't exist
             if [ ! -d "/var/www/my-line-backend" ]; then
-              git clone https://github.com/<your-username>/<your-repo>.git /var/www/my-line-backend
+              git clone https://github.com/ceobit/my-line-backend.git /var/www/my-line-backend
             fi
             cd /var/www/my-line-backend
 
