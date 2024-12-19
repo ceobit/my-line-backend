@@ -27,7 +27,17 @@ jobs:
       - name: Build the app
         run: npm run build
 
-      # Step 4: Deploy to server via SSH
+      # Step 4: Set Environment Variables
+      - name: Set environment variables
+        run: |
+          echo "DB_HOST=${{ secrets.DB_HOST }}" >> .env
+          echo "DB_PORT=${{ secrets.DB_PORT }}" >> .env
+          echo "DB_USERNAME=${{ secrets.DB_USERNAME }}" >> .env
+          echo "DB_PASSWORD=${{ secrets.DB_PASSWORD }}" >> .env
+          echo "DB_NAME=${{ secrets.DB_NAME }}" >> .env
+        working-directory: /var/www/my-line-backend
+
+      # Step 5: Deploy to server via SSH
       - name: Deploy to Server
         uses: appleboy/ssh-action@v0.1.8
         with:
@@ -36,7 +46,6 @@ jobs:
           key: ${{ secrets.SSH_KEY }}
           port: 22 # Default SSH port
           script: |
-            debug: true
             # Navigate to the app directory or clone the repo if it doesn't exist
             if [ ! -d "/var/www/my-line-backend" ]; then
               git clone https://github.com/ceobit/my-line-backend.git /var/www/my-line-backend
@@ -55,13 +64,3 @@ jobs:
             pm2 stop my-line-backend || true
             pm2 start dist/main.js --name my-line-backend
             pm2 save
-
-      # Step 5: Set Environment Variables
-      - name: Set environment variables
-        run: |
-          echo "DB_HOST=${{ secrets.DB_HOST }}" >> .env
-          echo "DB_PORT=${{ secrets.DB_PORT }}" >> .env
-          echo "DB_USERNAME=${{ secrets.DB_USERNAME }}" >> .env
-          echo "DB_PASSWORD=${{ secrets.DB_PASSWORD }}" >> .env
-          echo "DB_NAME=${{ secrets.DB_NAME }}" >> .env
-        working-directory: /var/www/my-line-backend
