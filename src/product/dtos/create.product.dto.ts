@@ -11,7 +11,6 @@ import { Type } from 'class-transformer';
 import { ApiProperty } from '@nestjs/swagger';
 import { ProductVariantDto } from './productVariant.dto';
 import { PackageDto } from './package.dto';
-import { ProductImageDto } from './productImage.dto';
 
 export class CreateProductDto {
   @IsString()
@@ -86,15 +85,4 @@ export class CreateProductDto {
     type: PackageDto,
   })
   package?: PackageDto;
-
-  @IsArray()
-  @ValidateNested({ each: true })
-  @Type(() => ProductImageDto)
-  @IsOptional()
-  @ApiProperty({
-    type: [ProductImageDto],
-    description: 'Images associated with the product',
-    required: false,
-  })
-  images?: ProductImageDto[];
 }

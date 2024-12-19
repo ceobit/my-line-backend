@@ -1,6 +1,5 @@
 import { Column, Entity, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
 import { ProductVariant } from './product-variant.entity';
-import { ProductImage } from './product-image.entity';
 
 @Entity()
 export class Product {
@@ -44,11 +43,6 @@ export class Product {
     width: number;
     weight: number;
   };
-
-  @OneToMany(() => ProductImage, (image) => image.product, {
-    cascade: true,
-  })
-  images: ProductImage[];
 
   @OneToMany(() => ProductVariant, (variant) => variant.product, {
     cascade: true,

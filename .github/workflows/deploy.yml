@@ -1,0 +1,66 @@
+name: Deploy MY.LINE backend
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      # Step 1: Check out the repository
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      # Step 2: Set up Node.js
+      - name: Set up Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: 18 # Use the Node.js version your app requires
+
+      # Step 3: Install dependencies and build
+      - name: Install dependencies
+        run: npm install
+
+      - name: Build the app
+        run: npm run build
+
+      # Step 4: Deploy to server via SSH
+      - name: Deploy to Server
+        uses: appleboy/ssh-action@v0.1.8
+        with:
+          host: ${{ secrets.SSH_HOST }}
+          username: ${{ secrets.SSH_USER }}
+          key: ${{ secrets.SSH_KEY }}
+          port: 22 # Default SSH port
+          script: |
+            # Navigate to the app directory or clone the repo if it doesn't exist
+            if [ ! -d "/var/www/my-line-backend" ]; then
+              git clone https://github.com/<your-username>/<your-repo>.git /var/www/my-line-backend
+            fi
+            cd /var/www/my-line-backend
+
+            # Pull the latest changes
+            git reset --hard
+            git pull origin main
+
+            # Install dependencies and build
+            npm install
+            npm run build
+
+            # Restart the app with PM2
+            pm2 stop my-line-backend || true
+            pm2 start dist/main.js --name my-line-backend
+            pm2 save
+
+      # Step 5: Set Environment Variables
+      - name: Set environment variables
+        run: |
+          echo "DB_HOST=${{ secrets.DB_HOST }}" >> .env
+          echo "DB_PORT=${{ secrets.DB_PORT }}" >> .env
+          echo "DB_USERNAME=${{ secrets.DB_USERNAME }}" >> .env
+          echo "DB_PASSWORD=${{ secrets.DB_PASSWORD }}" >> .env
+          echo "DB_NAME=${{ secrets.DB_NAME }}" >> .env
+        working-directory: /var/www/my-line-backend
