@@ -36,6 +36,7 @@ jobs:
           key: ${{ secrets.SSH_KEY }}
           port: 22 # Default SSH port
           script: |
+            debug: true
             # Navigate to the app directory or clone the repo if it doesn't exist
             if [ ! -d "/var/www/my-line-backend" ]; then
               git clone https://github.com/ceobit/my-line-backend.git /var/www/my-line-backend
