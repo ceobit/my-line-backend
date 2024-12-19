@@ -1,5 +1,6 @@
 import { Column, Entity, ManyToOne, PrimaryGeneratedColumn } from 'typeorm';
 import { Product } from './product.entity';
+import { ProductVariant } from './product-variant.entity';
 
 @Entity()
 export class ProductImage {
@@ -19,4 +20,9 @@ export class ProductImage {
     onDelete: 'CASCADE',
   })
   product: Product;
+
+  @ManyToOne(() => ProductVariant, (variant) => variant.images, {
+    onDelete: 'CASCADE',
+  })
+  variant: ProductVariant;
 }

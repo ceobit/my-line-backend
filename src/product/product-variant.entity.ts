@@ -1,5 +1,12 @@
-import { Column, Entity, ManyToOne, PrimaryGeneratedColumn } from 'typeorm';
+import {
+  Column,
+  Entity,
+  ManyToOne,
+  OneToMany,
+  PrimaryGeneratedColumn,
+} from 'typeorm';
 import { Product } from './product.entity';
+import { ProductImage } from './product-image.entity';
 
 @Entity()
 export class ProductVariant {
@@ -19,4 +26,9 @@ export class ProductVariant {
     onDelete: 'CASCADE',
   })
   product: Product;
+
+  @OneToMany(() => ProductImage, (image) => image.variant, {
+    cascade: true,
+  })
+  images: ProductImage[];
 }
