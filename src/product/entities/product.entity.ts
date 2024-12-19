@@ -22,9 +22,6 @@ export class Product {
   })
   price: number;
 
-  @Column()
-  quantity: number;
-
   @Column({ default: true })
   isActive: boolean;
 
