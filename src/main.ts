@@ -9,13 +9,16 @@ async function bootstrap() {
   const configService: ConfigService = app.get(ConfigService);
   const port: number = configService.get<number>('PORT') || 4000;
 
+  // Enable Global Prefix
+  app.setGlobalPrefix('api');
+
   const config = new DocumentBuilder()
     .setTitle('MY-LINE Backend API')
     .setDescription('The MY-LINE API description')
     .setVersion('1.0')
     .build();
   const document = SwaggerModule.createDocument(app, config);
-  SwaggerModule.setup('api', app, document);
+  SwaggerModule.setup('api/docs', app, document);
 
   await app.listen(port);
 }
