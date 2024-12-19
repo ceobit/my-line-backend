@@ -2,20 +2,20 @@ import { Column, Entity, ManyToOne, PrimaryGeneratedColumn } from 'typeorm';
 import { Product } from './product.entity';
 
 @Entity()
-export class ProductVariant {
+export class ProductImage {
   @PrimaryGeneratedColumn('uuid')
   id: number;
 
   @Column()
-  size: string;
+  url: string;
 
   @Column()
-  color: string;
+  alt: string;
 
-  @Column({ type: 'int', default: 0 })
-  quantity: number;
+  @Column({ default: false })
+  isPrimary: boolean;
 
-  @ManyToOne(() => Product, (product) => product.variants, {
+  @ManyToOne(() => Product, (product) => product.images, {
     onDelete: 'CASCADE',
   })
   product: Product;

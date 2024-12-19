@@ -2,11 +2,25 @@ import {
   IsArray,
   IsNotEmpty,
   IsNumber,
+  IsPositive,
   IsString,
   ValidateNested,
 } from 'class-validator';
 import { Type } from 'class-transformer';
-import { ProductVariantDto } from './product-variant.dto';
+
+class ProductVariantDto {
+  @IsString()
+  @IsNotEmpty()
+  size: string;
+
+  @IsString()
+  @IsNotEmpty()
+  color: string;
+
+  @IsNumber()
+  @IsNotEmpty()
+  quantity: number;
+}
 
 export class CreateProductDto {
   @IsString()
@@ -19,6 +33,7 @@ export class CreateProductDto {
 
   @IsNumber()
   @IsNotEmpty()
+  @IsPositive()
   price: number;
 
   @IsArray()
