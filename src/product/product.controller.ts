@@ -29,6 +29,13 @@ export class ProductController {
     return await this.productService.findOne(productId);
   }
 
+  @Get('name/:name')
+  @ApiOperation({ summary: 'Get a product by name' })
+  @ApiParam({ name: 'name', type: String })
+  async findByName(@Param() name: string) {
+    return await this.productService.findByName(name);
+  }
+
   @Get('find-many')
   @ApiOperation({ summary: 'Get multiple products by IDs' })
   @ApiBody({ type: [Number] })

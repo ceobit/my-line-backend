@@ -1,7 +1,7 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Product } from './entities/product.entity';
-import { Repository } from 'typeorm';
+import { In, Repository } from 'typeorm';
 import { CreateProductDto } from './dtos/create.product.dto';
 
 @Injectable()
@@ -19,16 +19,22 @@ export class ProductService {
     const product = await this.productRepository.findOneBy({ productId });
 
     if (!product) {
-      throw new NotFoundException(`There is no user under id ${productId}`);
+      throw new NotFoundException(`There is no product under id ${productId}`);
     }
     return product;
   }
 
-  async findManyByIds(arrayOfIds: Array<number>) {
-    return await this.productRepository
-      .createQueryBuilder()
-      .where('productId IN(:...arrayOfIds)', { arrayOfIds })
-      .getMany();
+  async findByName(name: string) {
+    const product = await this.productRepository.findOneBy({ name });
+
+    if (!product) {
+      throw new NotFoundException(`There is no product under name ${name}`);
+    }
+    return product;
+  }
+
+  async findManyByIds(arrayOfIds: Array<number>): Promise<Product[]> {
+    return this.productRepository.findBy({ productId: In(arrayOfIds) });
   }
 
   async create(createProductDto: CreateProductDto) {
@@ -43,17 +49,13 @@ export class ProductService {
     });
 
     if (!product) {
-      throw new NotFoundException(`There is no user under id ${productId}`);
+      throw new NotFoundException(`There is no product under id ${productId}`);
     }
     return this.productRepository.save(product);
   }
 
   async remove(productId: number) {
     const product = await this.findOne(productId);
-
-    if (!product) {
-      throw new NotFoundException(`There is no user under id ${productId}`);
-    }
     return this.productRepository.remove(product);
   }
 }
