@@ -16,7 +16,6 @@ export class ProductService {
   }
 
   async findOne(productId: string) {
-    console.log(productId);
     const product = await this.productRepository.findOneBy({ productId });
 
     if (!product) {
@@ -30,7 +29,6 @@ export class ProductService {
   async findByName(name: string) {
     const product = await this.productRepository.findOneBy({ name });
 
-    console.log({ name });
     if (!product) {
       throw new NotFoundException(`There is no product under name ${{ name }}`);
     }
