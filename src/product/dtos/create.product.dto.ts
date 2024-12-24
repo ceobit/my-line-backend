@@ -15,6 +15,11 @@ import { PackageDto } from './package.dto';
 export class CreateProductDto {
   @IsString()
   @IsNotEmpty()
+  @ApiProperty({ description: 'The slug of the product' })
+  slug: string;
+
+  @IsString()
+  @IsNotEmpty()
   @ApiProperty({ description: 'The name of the product' })
   name: string;
 

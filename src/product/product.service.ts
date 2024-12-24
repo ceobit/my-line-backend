@@ -30,7 +30,16 @@ export class ProductService {
     const product = await this.productRepository.findOneBy({ name });
 
     if (!product) {
-      throw new NotFoundException(`There is no product under name ${{ name }}`);
+      throw new NotFoundException(`There is no product under name ${name}`);
+    }
+    return product;
+  }
+
+  async findBySlug(slug: string) {
+    const product = await this.productRepository.findOneBy({ slug });
+
+    if (!product) {
+      throw new NotFoundException(`There is no product under slug ${slug}`);
     }
     return product;
   }

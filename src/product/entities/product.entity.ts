@@ -7,6 +7,9 @@ export class Product {
   productId: string;
 
   @Column()
+  slug: string;
+
+  @Column()
   name: string;
 
   @Column()

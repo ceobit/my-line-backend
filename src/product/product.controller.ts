@@ -36,6 +36,13 @@ export class ProductController {
     return await this.productService.findByName(name);
   }
 
+  @Get('slug/:slug')
+  @ApiOperation({ summary: 'Get a product by slug' })
+  @ApiParam({ name: 'slug', type: String })
+  async findBySlug(@Param('slug') slug: string) {
+    return await this.productService.findBySlug(slug);
+  }
+
   @Post('find-many')
   @ApiOperation({ summary: 'Get multiple products by IDs' })
   @ApiBody({ type: [String] })
