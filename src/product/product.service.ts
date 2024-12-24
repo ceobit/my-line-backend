@@ -3,6 +3,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Product } from './entities/product.entity';
 import { In, Repository } from 'typeorm';
 import { CreateProductDto } from './dtos/create.product.dto';
+import { UpdateProductDto } from './dtos/update.product.dto';
 
 @Injectable()
 export class ProductService {
@@ -11,62 +12,60 @@ export class ProductService {
     private productRepository: Repository<Product>,
   ) {}
 
-  async findAll() {
-    return await this.productRepository.find();
+  async getAllProducts() {
+    return this.productRepository.find();
   }
 
-  async findOne(productId: string) {
+  async getProductById(productId: string) {
     const product = await this.productRepository.findOneBy({ productId });
 
     if (!product) {
-      throw new NotFoundException(
-        `There is no product under id ${{ productId }}`,
-      );
+      throw new NotFoundException(`Product with id ${productId} not found.`);
     }
     return product;
   }
 
-  async findByName(name: string) {
+  async getProductByName(name: string) {
     const product = await this.productRepository.findOneBy({ name });
 
     if (!product) {
-      throw new NotFoundException(`There is no product under name ${name}`);
+      throw new NotFoundException(`Product with name ${name} not found.`);
     }
     return product;
   }
 
-  async findBySlug(slug: string) {
+  async getProductBySlug(slug: string) {
     const product = await this.productRepository.findOneBy({ slug });
 
     if (!product) {
-      throw new NotFoundException(`There is no product under slug ${slug}`);
+      throw new NotFoundException(`Product with slug ${slug} not found.`);
     }
     return product;
   }
 
-  async findManyByIds(arrayOfIds: Array<string>): Promise<Product[]> {
-    return this.productRepository.findBy({ productId: In(arrayOfIds) });
+  async getProductsByIds(productIds: string[]): Promise<Product[]> {
+    return this.productRepository.findBy({ productId: In(productIds) });
   }
 
-  async create(createProductDto: CreateProductDto) {
+  async createProduct(createProductDto: CreateProductDto) {
     const product = this.productRepository.create(createProductDto);
     return this.productRepository.save(product);
   }
 
-  async update(productId: string, updateProductDto: CreateProductDto) {
+  async updateProduct(productId: string, updateProductDto: UpdateProductDto) {
     const product = await this.productRepository.preload({
       productId,
       ...updateProductDto,
     });
 
     if (!product) {
-      throw new NotFoundException(`There is no product under id ${productId}`);
+      throw new NotFoundException(`Product with id ${productId} not found.`);
     }
     return this.productRepository.save(product);
   }
 
-  async remove(productId: string) {
-    const product = await this.findOne(productId);
+  async deleteProduct(productId: string) {
+    const product = await this.getProductById(productId);
     return this.productRepository.remove(product);
   }
 }
