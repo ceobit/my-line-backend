@@ -15,11 +15,14 @@ export class ProductService {
     return await this.productRepository.find();
   }
 
-  async findOne(productId: number) {
+  async findOne(productId: string) {
+    console.log(productId);
     const product = await this.productRepository.findOneBy({ productId });
 
     if (!product) {
-      throw new NotFoundException(`There is no product under id ${productId}`);
+      throw new NotFoundException(
+        `There is no product under id ${{ productId }}`,
+      );
     }
     return product;
   }
@@ -27,13 +30,14 @@ export class ProductService {
   async findByName(name: string) {
     const product = await this.productRepository.findOneBy({ name });
 
+    console.log({ name });
     if (!product) {
-      throw new NotFoundException(`There is no product under name ${name}`);
+      throw new NotFoundException(`There is no product under name ${{ name }}`);
     }
     return product;
   }
 
-  async findManyByIds(arrayOfIds: Array<number>): Promise<Product[]> {
+  async findManyByIds(arrayOfIds: Array<string>): Promise<Product[]> {
     return this.productRepository.findBy({ productId: In(arrayOfIds) });
   }
 
@@ -42,7 +46,7 @@ export class ProductService {
     return this.productRepository.save(product);
   }
 
-  async update(productId: number, updateProductDto: CreateProductDto) {
+  async update(productId: string, updateProductDto: CreateProductDto) {
     const product = await this.productRepository.preload({
       productId,
       ...updateProductDto,
@@ -54,7 +58,7 @@ export class ProductService {
     return this.productRepository.save(product);
   }
 
-  async remove(productId: number) {
+  async remove(productId: string) {
     const product = await this.findOne(productId);
     return this.productRepository.remove(product);
   }

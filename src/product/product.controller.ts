@@ -24,22 +24,22 @@ export class ProductController {
 
   @Get(':productId')
   @ApiOperation({ summary: 'Get a product by ID' })
-  @ApiParam({ name: 'productId', type: Number })
-  async findOne(@Param() productId: number) {
+  @ApiParam({ name: 'productId', type: String })
+  async findOne(@Param('productId') productId: string) {
     return await this.productService.findOne(productId);
   }
 
   @Get('name/:name')
   @ApiOperation({ summary: 'Get a product by name' })
   @ApiParam({ name: 'name', type: String })
-  async findByName(@Param() name: string) {
+  async findByName(@Param('name') name: string) {
     return await this.productService.findByName(name);
   }
 
-  @Get('find-many')
+  @Post('find-many')
   @ApiOperation({ summary: 'Get multiple products by IDs' })
-  @ApiBody({ type: [Number] })
-  async findManyByIds(@Body() productIds: Array<number>) {
+  @ApiBody({ type: [String] })
+  async findManyByIds(@Body() productIds: Array<string>) {
     return await this.productService.findManyByIds(productIds);
   }
 
@@ -51,9 +51,9 @@ export class ProductController {
 
   @Patch(':productId')
   @ApiOperation({ summary: 'Update a product by ID' })
-  @ApiParam({ name: 'productId', type: Number })
+  @ApiParam({ name: 'productId', type: String })
   async update(
-    @Param('productId') productId: number,
+    @Param('productId') productId: string,
     @Body() updateProductDto: CreateProductDto,
   ) {
     return await this.productService.update(productId, updateProductDto);
@@ -61,8 +61,8 @@ export class ProductController {
 
   @Delete()
   @ApiOperation({ summary: 'Delete a product by ID' })
-  @ApiParam({ name: 'productId', type: Number })
-  async remove(@Param('productId') productId: number) {
+  @ApiParam({ name: 'productId', type: String })
+  async remove(@Param('productId') productId: string) {
     return await this.productService.remove(productId);
   }
 }

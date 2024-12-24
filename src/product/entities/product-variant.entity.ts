@@ -11,7 +11,7 @@ import { ProductImage } from './product-image.entity';
 @Entity()
 export class ProductVariant {
   @PrimaryGeneratedColumn('uuid')
-  id: number;
+  id: string;
 
   @Column()
   size: string;
