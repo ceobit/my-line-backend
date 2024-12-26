@@ -17,7 +17,10 @@ export class ProductService {
   }
 
   async getProductById(productId: string) {
-    const product = await this.productRepository.findOneBy({ productId });
+    const product = await this.productRepository.findOne({
+      where: { productId },
+      relations: ['variants', 'variants.images'],
+    });
 
     if (!product) {
       throw new NotFoundException(`Product with id ${productId} not found.`);
@@ -26,7 +29,10 @@ export class ProductService {
   }
 
   async getProductByName(name: string) {
-    const product = await this.productRepository.findOneBy({ name });
+    const product = await this.productRepository.findOne({
+      where: { name },
+      relations: ['variants', 'variants.images'],
+    });
 
     if (!product) {
       throw new NotFoundException(`Product with name ${name} not found.`);
@@ -35,7 +41,10 @@ export class ProductService {
   }
 
   async getProductBySlug(slug: string) {
-    const product = await this.productRepository.findOneBy({ slug });
+    const product = await this.productRepository.findOne({
+      where: { slug },
+      relations: ['variants', 'variants.images'],
+    });
 
     if (!product) {
       throw new NotFoundException(`Product with slug ${slug} not found.`);
