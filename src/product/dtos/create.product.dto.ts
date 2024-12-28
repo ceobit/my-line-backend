@@ -90,4 +90,11 @@ export class CreateProductDto {
     type: PackageDto,
   })
   package?: PackageDto;
+
+  @IsOptional()
+  @ApiProperty({
+    description: 'Whether the product is active',
+    required: false,
+  })
+  isActive?: boolean;
 }

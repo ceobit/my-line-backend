@@ -37,5 +37,5 @@ export class ProductVariantDto {
     description: 'Images associated with the product',
     required: false,
   })
-  images?: ProductImageDto[];
+  images: ProductImageDto[];
 }
