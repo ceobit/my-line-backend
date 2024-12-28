@@ -2,7 +2,6 @@ import {
   IsArray,
   IsNotEmpty,
   IsNumber,
-  IsOptional,
   IsPositive,
   IsString,
   ValidateNested,
@@ -31,7 +30,6 @@ export class ProductVariantDto {
   @IsArray()
   @ValidateNested({ each: true })
   @Type(() => ProductImageDto)
-  @IsOptional()
   @ApiProperty({
     type: [ProductImageDto],
     description: 'Images associated with the product',
