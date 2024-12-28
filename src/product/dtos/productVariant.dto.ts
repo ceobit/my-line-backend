@@ -33,7 +33,6 @@ export class ProductVariantDto {
   @ApiProperty({
     type: [ProductImageDto],
     description: 'Images associated with the product',
-    required: false,
   })
   images: ProductImageDto[];
 }
