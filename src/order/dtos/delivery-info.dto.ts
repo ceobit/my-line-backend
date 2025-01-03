@@ -35,6 +35,11 @@ class CDEKAddressDto {
 
   @IsString()
   @IsNotEmpty()
+  @ApiProperty({ description: 'City name of the address' })
+  city: string;
+
+  @IsString()
+  @IsNotEmpty()
   @ApiProperty({ description: 'Street name of the address' })
   street: string;
 
