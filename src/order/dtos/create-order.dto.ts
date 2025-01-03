@@ -1,6 +1,6 @@
 import {
-  IsBoolean,
   IsEmail,
+  IsEnum,
   IsNumber,
   IsOptional,
   IsString,
@@ -9,6 +9,7 @@ import {
 import { Type } from 'class-transformer';
 import { ApiProperty } from '@nestjs/swagger';
 import { DeliveryInfoDto } from './delivery-info.dto';
+import { OrderStatus } from 'src/enums';
 
 class OrderItemDto {
   @IsString()
@@ -42,6 +43,15 @@ export class CreateOrderDto {
     description: 'List of items in the order',
   })
   items: OrderItemDto[];
+
+  @IsOptional()
+  @IsEnum(OrderStatus)
+  @ApiProperty({
+    description: 'The status of the order',
+    enum: OrderStatus,
+    default: OrderStatus.DRAFT,
+  })
+  status?: OrderStatus;
 
   @IsString()
   @ApiProperty({
@@ -78,13 +88,4 @@ export class CreateOrderDto {
     type: PaymentInfoDto,
   })
   paymentInfo: PaymentInfoDto;
-
-  @IsBoolean()
-  @IsOptional()
-  @ApiProperty({
-    description: 'Whether the order is paid',
-    required: false,
-    default: false,
-  })
-  isPaid?: boolean;
 }

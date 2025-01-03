@@ -11,11 +11,19 @@ import {
 import { OrderItem } from './order-item.entity';
 import { DeliveryInfo } from './delivery-info.entity';
 import { PaymentInfo } from './payment-info.entity';
+import { OrderStatus } from '../../enums';
 
 @Entity()
 export class Order {
   @PrimaryGeneratedColumn('uuid')
   id: string;
+
+  @Column({
+    type: 'enum',
+    enum: OrderStatus,
+    default: OrderStatus.DRAFT,
+  })
+  status: OrderStatus;
 
   @Column()
   customerName: string;
@@ -39,9 +47,6 @@ export class Order {
   @ManyToOne(() => PaymentInfo, { cascade: true })
   @JoinColumn()
   paymentInfo: PaymentInfo;
-
-  @Column({ default: false })
-  isPaid: boolean;
 
   @CreateDateColumn()
   createdAt: Date;

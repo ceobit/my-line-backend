@@ -9,11 +9,7 @@ import {
 } from 'class-validator';
 import { Type } from 'class-transformer';
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
-
-enum DeliveryType {
-  CDEK_PVZ = 'CDEK_PVZ',
-  TO_DOOR = 'TO_DOOR',
-}
+import { DeliveryType } from 'src/enums';
 
 class LocalityDto {
   @IsString()
