@@ -27,7 +27,7 @@ export class DeliveryInfo {
   pvzId?: string;
 
   @Column('jsonb', { nullable: true })
-  cdekAddress?: {
+  address?: {
     postcode: string;
     city: string;
     street: string;

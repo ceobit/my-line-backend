@@ -63,9 +63,9 @@ class CDEKDetailsDto {
   @IsOptional()
   @ValidateNested()
   @Type(() => CDEKAddressDto)
-  @ApiProperty({
+  @ApiPropertyOptional({
     type: CDEKAddressDto,
-    description: 'CDEK delivery address details',
+    description: 'Delivery address details',
   })
   address?: CDEKAddressDto;
 
