@@ -81,11 +81,12 @@ export class CreateOrderDto {
   })
   deliveryInfo: DeliveryInfoDto;
 
+  @IsOptional()
   @ValidateNested()
   @Type(() => PaymentInfoDto)
   @ApiProperty({
     description: 'Payment information for the order',
     type: PaymentInfoDto,
   })
-  paymentInfo: PaymentInfoDto;
+  paymentInfo?: PaymentInfoDto;
 }
