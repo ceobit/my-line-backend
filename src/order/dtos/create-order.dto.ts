@@ -55,6 +55,12 @@ export class CreateOrderDto {
 
   @IsString()
   @ApiProperty({
+    description: 'The internal ID of the order',
+  })
+  internalId: string;
+
+  @IsString()
+  @ApiProperty({
     description: 'The first name of the customer placing the order',
   })
   customerName: string;

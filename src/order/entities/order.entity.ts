@@ -25,6 +25,9 @@ export class Order {
   })
   status: OrderStatus;
 
+  @Column({ unique: true })
+  internalId: string;
+
   @Column()
   customerName: string;
 
