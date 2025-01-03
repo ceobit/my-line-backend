@@ -4,7 +4,6 @@ import {
   IsNumber,
   IsOptional,
   IsString,
-  ValidateIf,
   ValidateNested,
 } from 'class-validator';
 import { Type } from 'class-transformer';
@@ -56,13 +55,14 @@ class CDEKAddressDto {
 }
 
 class CDEKDetailsDto {
+  @IsOptional()
   @ValidateNested()
   @Type(() => CDEKAddressDto)
   @ApiProperty({
     type: CDEKAddressDto,
     description: 'CDEK delivery address details',
   })
-  address: CDEKAddressDto;
+  address?: CDEKAddressDto;
 
   @IsOptional()
   @IsString()
@@ -72,18 +72,6 @@ class CDEKDetailsDto {
   @IsOptional()
   @IsString()
   @ApiPropertyOptional({ description: 'Optional comment for CDEK delivery' })
-  comment?: string;
-}
-
-class DoorDeliveryDto {
-  @IsString()
-  @IsNotEmpty()
-  @ApiProperty({ description: 'Full address for door delivery' })
-  address: string;
-
-  @IsOptional()
-  @IsString()
-  @ApiPropertyOptional({ description: 'Optional comment for door delivery' })
   comment?: string;
 }
 
@@ -99,21 +87,11 @@ export class DeliveryInfoDto {
   @ApiProperty({ description: 'Price of the delivery' })
   deliveryPrice: number;
 
-  @ValidateIf((o) => o.type === DeliveryType.CDEK_PVZ)
   @ValidateNested()
   @Type(() => CDEKDetailsDto)
   @ApiPropertyOptional({
     type: CDEKDetailsDto,
-    description: 'Details for CDEK delivery (if applicable)',
+    description: 'Details for CDEK delivery',
   })
   cdekDetails?: CDEKDetailsDto;
-
-  @ValidateIf((o) => o.type === DeliveryType.TO_DOOR)
-  @ValidateNested()
-  @Type(() => DoorDeliveryDto)
-  @ApiPropertyOptional({
-    type: DoorDeliveryDto,
-    description: 'Details for door delivery (if applicable)',
-  })
-  doorDelivery?: DoorDeliveryDto;
 }

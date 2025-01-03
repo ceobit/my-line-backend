@@ -23,13 +23,13 @@ export class DeliveryInfo {
   })
   deliveryPrice: number;
 
-  // Fields for "CDEK_PVZ"
   @Column({ nullable: true })
   pvzId?: string;
 
   @Column('jsonb', { nullable: true })
   cdekAddress?: {
     postcode: string;
+    city: string;
     street: string;
     house: string;
     apartment?: string;
@@ -40,11 +40,6 @@ export class DeliveryInfo {
     };
   };
 
-  // Field for "TO_DOOR"
-  @Column({ nullable: true })
-  doorAddress?: string;
-
-  // Optional comment field for additional notes
   @Column({ nullable: true })
   comment?: string;
 
