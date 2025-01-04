@@ -7,7 +7,7 @@ import {
   ValidateNested,
 } from 'class-validator';
 import { Type } from 'class-transformer';
-import { ApiProperty } from '@nestjs/swagger';
+import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 import { DeliveryInfoDto } from './delivery-info.dto';
 import { OrderStatus } from 'src/enums';
 
@@ -90,7 +90,7 @@ export class CreateOrderDto {
   @IsOptional()
   @ValidateNested()
   @Type(() => PaymentInfoDto)
-  @ApiProperty({
+  @ApiPropertyOptional({
     description: 'Payment information for the order',
     type: PaymentInfoDto,
   })
