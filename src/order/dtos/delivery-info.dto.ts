@@ -59,7 +59,18 @@ class CDEKAddressDto {
   locality: LocalityDto;
 }
 
-class CDEKDetailsDto {
+export class DeliveryInfoDto {
+  @IsEnum(DeliveryType)
+  @ApiProperty({
+    enum: DeliveryType,
+    description: 'Type of delivery: CDEK_PVZ or TO_DOOR',
+  })
+  type: DeliveryType;
+
+  @IsNumber()
+  @ApiProperty({ description: 'Price of the delivery' })
+  deliveryPrice: number;
+
   @IsOptional()
   @ValidateNested()
   @Type(() => CDEKAddressDto)
@@ -78,25 +89,4 @@ class CDEKDetailsDto {
   @IsString()
   @ApiPropertyOptional({ description: 'Optional comment for CDEK delivery' })
   comment?: string;
-}
-
-export class DeliveryInfoDto {
-  @IsEnum(DeliveryType)
-  @ApiProperty({
-    enum: DeliveryType,
-    description: 'Type of delivery: CDEK_PVZ or TO_DOOR',
-  })
-  type: DeliveryType;
-
-  @IsNumber()
-  @ApiProperty({ description: 'Price of the delivery' })
-  deliveryPrice: number;
-
-  @ValidateNested()
-  @Type(() => CDEKDetailsDto)
-  @ApiPropertyOptional({
-    type: CDEKDetailsDto,
-    description: 'Details for CDEK delivery',
-  })
-  cdekDetails?: CDEKDetailsDto;
 }
