@@ -14,6 +14,19 @@ async function bootstrap() {
   // Enable Global Prefix
   app.setGlobalPrefix('api');
 
+  // Enable CORS
+  app.enableCors({
+    origin: [
+      'http://localhost:3000',
+      'https://www.my-line.app',
+      'https://www.my-line.store',
+    ],
+    methods: 'GET,POST,PUT,DELETE,OPTIONS',
+    credentials: true,
+    allowedHeaders: 'Content-Type, Authorization',
+    exposedHeaders: 'Authorization',
+  });
+
   const config = new DocumentBuilder()
     .setTitle('MY-LINE Backend API')
     .setDescription('The MY-LINE API description')
