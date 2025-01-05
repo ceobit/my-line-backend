@@ -2,7 +2,8 @@ import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { Order } from './entities/order.entity';
-import { CreateOrderDto } from './dtos/create-order.dto';
+import { CreateOrderDto } from './dtos/create.order.dto';
+import { UpdateOrderDto } from './dtos/update.order.dto';
 
 @Injectable()
 export class OrderService {
@@ -24,7 +25,7 @@ export class OrderService {
     return this.orderRepository.save(order);
   }
 
-  async findAll(): Promise<Order[]> {
+  async getAllOrders(): Promise<Order[]> {
     const order = this.orderRepository.find({
       relations: ['items', 'deliveryInfo', 'paymentInfo'],
     });
@@ -36,7 +37,7 @@ export class OrderService {
     return order;
   }
 
-  async findOne(id: string): Promise<Order> {
+  async getOrderById(id: string): Promise<Order> {
     const order = this.orderRepository.findOne({
       where: { id },
       relations: ['items', 'deliveryInfo', 'paymentInfo'],
@@ -47,5 +48,22 @@ export class OrderService {
     }
 
     return order;
+  }
+
+  async updateOrderByInternalId(
+    internalId: string,
+    updateOrderDto: UpdateOrderDto,
+  ) {
+    const order = await this.orderRepository.preload({
+      internalId,
+      ...updateOrderDto,
+    });
+
+    if (!order) {
+      throw new NotFoundException(
+        `Order with internal id ${internalId} not found.`,
+      );
+    }
+    return this.orderRepository.save(order);
   }
 }

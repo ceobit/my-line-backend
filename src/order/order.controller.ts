@@ -1,4 +1,4 @@
-import { Body, Controller, Get, Param, Post } from '@nestjs/common';
+import { Body, Controller, Get, Param, Patch, Post } from '@nestjs/common';
 import {
   ApiBody,
   ApiOperation,
@@ -7,8 +7,9 @@ import {
   ApiTags,
 } from '@nestjs/swagger';
 import { OrderService } from './order.service';
-import { CreateOrderDto } from './dtos/create-order.dto';
+import { CreateOrderDto } from './dtos/create.order.dto';
 import { Order } from './entities/order.entity';
+import { UpdateOrderDto } from './dtos/update.order.dto';
 
 @ApiTags('Orders')
 @Controller('orders')
@@ -35,7 +36,7 @@ export class OrderController {
     description:
       'Validation error. Ensure all required fields are filled correctly.',
   })
-  create(@Body() createOrderDto: CreateOrderDto) {
+  createOrder(@Body() createOrderDto: CreateOrderDto) {
     return this.orderService.createOrder(createOrderDto);
   }
 
@@ -50,8 +51,8 @@ export class OrderController {
     description: 'Successfully retrieved the list of orders.',
     type: [Order],
   })
-  findAll() {
-    return this.orderService.findAll();
+  getAllOrders() {
+    return this.orderService.getAllOrders();
   }
 
   @Get(':id')
@@ -74,7 +75,40 @@ export class OrderController {
     status: 404,
     description: 'Order not found. Ensure the provided ID is correct.',
   })
-  findOne(@Param('id') id: string) {
-    return this.orderService.findOne(id);
+  getOrderById(@Param('id') id: string) {
+    return this.orderService.getOrderById(id);
+  }
+
+  @Patch(':internalId')
+  @ApiOperation({
+    summary: 'Update an order by internal ID',
+    description: 'Update the details of an order by its internal identifier.',
+  })
+  @ApiParam({
+    name: 'internalId',
+    type: String,
+    description: 'The internal ID of the order to update',
+  })
+  @ApiBody({
+    type: UpdateOrderDto,
+    description: 'The data to update the order',
+  })
+  @ApiResponse({
+    status: 200,
+    description: 'Successfully updated the order.',
+    type: Order,
+  })
+  @ApiResponse({
+    status: 404,
+    description: 'Order not found. Ensure the provided internal ID is correct.',
+  })
+  updateOrderByInternalId(
+    @Param('internalId') internalId: string,
+    @Body() updateOrderDto: UpdateOrderDto,
+  ) {
+    return this.orderService.updateOrderByInternalId(
+      internalId,
+      updateOrderDto,
+    );
   }
 }
