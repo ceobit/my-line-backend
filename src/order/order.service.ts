@@ -1,4 +1,8 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import {
+  Injectable,
+  InternalServerErrorException,
+  NotFoundException,
+} from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { Order } from './entities/order.entity';
@@ -55,17 +59,30 @@ export class OrderService {
   async updateOrderByInternalId(
     internalId: string,
     updateOrderDto: UpdateOrderDto,
-  ) {
-    const order = await this.orderRepository.preload({
-      internalId,
-      ...updateOrderDto,
-    });
+  ): Promise<Order> {
+    try {
+      // Find the existing order by internalId
+      const existingOrder = await this.orderRepository.findOne({
+        where: { internalId },
+      });
 
-    if (!order) {
-      throw new NotFoundException(
-        `Order with internal id ${internalId} not found.`,
+      if (!existingOrder) {
+        throw new NotFoundException(
+          `Order with internal ID ${internalId} not found.`,
+        );
+      }
+
+      // Merge the existing order with the new data
+      const updatedOrder = this.orderRepository.merge(
+        existingOrder,
+        updateOrderDto,
       );
+
+      // Save the updated order to the database
+      return await this.orderRepository.save(updatedOrder);
+    } catch (error) {
+      console.error('Error updating order:', error.message, error.stack);
+      throw new InternalServerErrorException('Failed to update order');
     }
-    return this.orderRepository.save(order);
   }
 }
