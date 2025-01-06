@@ -37,14 +37,16 @@ export class OrderService {
     return order;
   }
 
-  async getOrderById(id: string): Promise<Order> {
+  async getOrderByInternalId(internalId: string): Promise<Order> {
     const order = this.orderRepository.findOne({
-      where: { id },
+      where: { internalId },
       relations: ['items', 'deliveryInfo', 'paymentInfo'],
     });
 
     if (!order) {
-      throw new NotFoundException(`Order with id ${id} not found.`);
+      throw new NotFoundException(
+        `Order with internalId ${internalId} not found.`,
+      );
     }
 
     return order;

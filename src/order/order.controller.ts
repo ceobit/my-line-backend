@@ -55,16 +55,16 @@ export class OrderController {
     return this.orderService.getAllOrders();
   }
 
-  @Get(':id')
+  @Get(':internalId')
   @ApiOperation({
     summary: 'Retrieve a single order by ID',
     description:
       'Fetch the details of a single order by its unique identifier.',
   })
   @ApiParam({
-    name: 'id',
+    name: 'internalId',
     type: String,
-    description: 'The unique ID of the order to retrieve',
+    description: 'The unique internalId of the order to retrieve',
   })
   @ApiResponse({
     status: 200,
@@ -73,10 +73,10 @@ export class OrderController {
   })
   @ApiResponse({
     status: 404,
-    description: 'Order not found. Ensure the provided ID is correct.',
+    description: 'Order not found. Ensure the provided internalId is correct.',
   })
-  getOrderById(@Param('id') id: string) {
-    return this.orderService.getOrderById(id);
+  getOrderByInternalId(@Param('internalId') internalId: string) {
+    return this.orderService.getOrderByInternalId(internalId);
   }
 
   @Patch(':internalId')
