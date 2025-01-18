@@ -13,8 +13,8 @@ import { OrderStatus } from 'src/enums';
 
 class OrderItemDto {
   @IsString()
-  @ApiProperty({ description: 'The ID of the product being ordered' })
-  productId: string;
+  @ApiProperty({ description: 'The ID of the product variant being ordered' })
+  variantId: string;
 
   @IsNumber()
   @ApiProperty({ description: 'The quantity of the product in the order' })
