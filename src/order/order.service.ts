@@ -17,16 +17,21 @@ export class OrderService {
   ) {}
 
   async createOrder(createOrderDto: CreateOrderDto): Promise<Order> {
-    const { items, deliveryInfo, paymentInfo, ...orderData } = createOrderDto;
+    try {
+      const { items, deliveryInfo, paymentInfo, ...orderData } = createOrderDto;
 
-    const order = this.orderRepository.create({
-      ...orderData,
-      items,
-      deliveryInfo,
-      paymentInfo,
-    });
+      const order = this.orderRepository.create({
+        ...orderData,
+        items,
+        deliveryInfo,
+        paymentInfo,
+      });
 
-    return this.orderRepository.save(order);
+      return await this.orderRepository.save(order);
+    } catch (error) {
+      console.error('Error creating order:', error.message, error.stack);
+      throw new InternalServerErrorException('Failed to create order');
+    }
   }
 
   async getAllOrders(): Promise<Order[]> {
