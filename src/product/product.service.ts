@@ -73,6 +73,20 @@ export class ProductService {
     return this.productRepository.save(product);
   }
 
+  async getProductByVariantId(variantId: string): Promise<Product> {
+    const product = await this.productRepository.findOne({
+      where: { variants: { id: variantId } },
+      relations: ['variants', 'variants.images'],
+    });
+
+    if (!product) {
+      throw new NotFoundException(
+        `Product with variant id ${variantId} not found.`,
+      );
+    }
+    return product;
+  }
+
   async deleteProduct(productId: string) {
     const product = await this.getProductById(productId);
     return this.productRepository.remove(product);

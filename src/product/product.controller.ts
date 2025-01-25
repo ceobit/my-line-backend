@@ -44,6 +44,13 @@ export class ProductController {
     return this.productService.getProductBySlug(slug);
   }
 
+  @Get('variant/:variantId')
+  @ApiOperation({ summary: 'Get a product by variant ID' })
+  @ApiParam({ name: 'variantId', type: String })
+  async getProductByVariantId(@Param('variantId') variantId: string) {
+    return this.productService.getProductByVariantId(variantId);
+  }
+
   @Post('find-many')
   @ApiOperation({ summary: 'Get multiple products by IDs' })
   @ApiBody({ schema: { type: 'array', items: { type: 'string' } } })
