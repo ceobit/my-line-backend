@@ -1,16 +1,26 @@
 import {
+  ConflictException,
   Injectable,
   InternalServerErrorException,
+  Logger,
   NotFoundException,
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
+import { Repository, QueryFailedError } from 'typeorm';
 import { Order } from './entities/order.entity';
 import { CreateOrderDto } from './dtos/create.order.dto';
 import { UpdateOrderDto } from './dtos/update.order.dto';
 
+interface PostgresError extends Error {
+  code: string;
+  detail?: string;
+  constraint?: string;
+}
+
 @Injectable()
 export class OrderService {
+  private readonly logger = new Logger(OrderService.name);
+
   constructor(
     @InjectRepository(Order)
     private readonly orderRepository: Repository<Order>,
@@ -18,47 +28,60 @@ export class OrderService {
 
   async createOrder(createOrderDto: CreateOrderDto): Promise<Order> {
     try {
-      const { items, deliveryInfo, paymentInfo, ...orderData } = createOrderDto;
-
-      const order = this.orderRepository.create({
-        ...orderData,
-        items,
-        deliveryInfo,
-        paymentInfo,
-      });
-
-      return await this.orderRepository.save(order);
+      const order = this.orderRepository.create(createOrderDto);
+      const savedOrder = await this.orderRepository.save(order);
+      this.logger.log(`Order created: ${savedOrder.internalId}`);
+      return savedOrder;
     } catch (error) {
-      console.error('Error creating order:', error.message, error.stack);
+      this.logger.error(
+        `Failed to create order: ${error.message}`,
+        error.stack,
+      );
+
+      if (error instanceof QueryFailedError) {
+        this.handleDatabaseError(error, createOrderDto.internalId);
+      }
+
       throw new InternalServerErrorException('Failed to create order');
     }
   }
 
   async getAllOrders(): Promise<Order[]> {
-    const order = this.orderRepository.find({
-      relations: ['items', 'deliveryInfo', 'paymentInfo'],
-    });
+    try {
+      const orders = await this.orderRepository.find({
+        relations: ['items', 'deliveryInfo', 'paymentInfo'],
+      });
 
-    if (!order) {
-      throw new NotFoundException(`Orders are not found.`);
+      if (orders.length === 0) {
+        this.logger.warn('No orders found in database');
+      }
+
+      return orders;
+    } catch (error) {
+      this.logger.error('Failed to retrieve orders', error.stack);
+      throw new InternalServerErrorException('Failed to retrieve orders');
     }
-
-    return order;
   }
 
   async getOrderByInternalId(internalId: string): Promise<Order> {
-    const order = this.orderRepository.findOne({
-      where: { internalId },
-      relations: ['items', 'deliveryInfo', 'paymentInfo'],
-    });
+    try {
+      const order = await this.orderRepository.findOne({
+        where: { internalId },
+        relations: ['items', 'deliveryInfo', 'paymentInfo'],
+      });
 
-    if (!order) {
-      throw new NotFoundException(
-        `Order with internalId ${internalId} not found.`,
-      );
+      if (!order) {
+        this.logger.warn(`Order not found: ${internalId}`);
+        throw new NotFoundException(`Order ${internalId} not found`);
+      }
+
+      return order;
+    } catch (error) {
+      this.logger.error(`Failed to retrieve order ${internalId}`, error.stack);
+
+      if (error instanceof NotFoundException) throw error;
+      throw new InternalServerErrorException('Failed to retrieve order');
     }
-
-    return order;
   }
 
   async updateOrderByInternalId(
@@ -66,28 +89,50 @@ export class OrderService {
     updateOrderDto: UpdateOrderDto,
   ): Promise<Order> {
     try {
-      // Find the existing order by internalId
-      const existingOrder = await this.orderRepository.findOne({
-        where: { internalId },
-      });
-
-      if (!existingOrder) {
-        throw new NotFoundException(
-          `Order with internal ID ${internalId} not found.`,
-        );
-      }
-
-      // Merge the existing order with the new data
-      const updatedOrder = this.orderRepository.merge(
+      const existingOrder = await this.getOrderByInternalId(internalId);
+      const mergedOrder = this.orderRepository.merge(
         existingOrder,
         updateOrderDto,
       );
+      const updatedOrder = await this.orderRepository.save(mergedOrder);
 
-      // Save the updated order to the database
-      return await this.orderRepository.save(updatedOrder);
+      this.logger.log(`Order updated: ${internalId}`);
+      return updatedOrder;
     } catch (error) {
-      console.error('Error updating order:', error.message, error.stack);
+      this.logger.error(`Failed to update order ${internalId}`, error.stack);
+
+      if (error instanceof NotFoundException) throw error;
+      if (error instanceof QueryFailedError) {
+        this.handleDatabaseError(error, internalId);
+      }
+
       throw new InternalServerErrorException('Failed to update order');
+    }
+  }
+
+  private handleDatabaseError(
+    error: QueryFailedError,
+    internalId: string,
+  ): void {
+    const driverError = error.driverError as PostgresError;
+
+    // Handle common PostgreSQL error codes
+    if (driverError.code) {
+      switch (driverError.code) {
+        case '23505': // Unique violation
+          throw new ConflictException(`Order ${internalId} already exists`);
+        case '23503': // Foreign key violation
+          throw new ConflictException('Invalid reference in order data');
+        case '22P02': // Invalid data type
+          throw new ConflictException('Invalid data format in request');
+        default:
+          this.logger.error(
+            `Unhandled database error code: ${driverError.code}`,
+          );
+      }
+    } else {
+      this.logger.error('Non-PostgreSQL database error', driverError);
+      throw new InternalServerErrorException('Database operation failed');
     }
   }
 }
