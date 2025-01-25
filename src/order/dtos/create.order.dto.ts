@@ -1,9 +1,12 @@
 import {
   IsEmail,
   IsEnum,
+  IsNotEmpty,
   IsNumber,
   IsOptional,
+  IsPositive,
   IsString,
+  Min,
   ValidateNested,
 } from 'class-validator';
 import { Type } from 'class-transformer';
@@ -13,14 +16,17 @@ import { OrderStatus } from 'src/enums';
 
 class OrderItemDto {
   @IsString()
+  @IsNotEmpty()
   @ApiProperty({ description: 'The ID of the product variant being ordered' })
   variantId: string;
 
   @IsNumber()
+  @Min(1)
   @ApiProperty({ description: 'The quantity of the product in the order' })
   quantity: number;
 
-  @IsNumber()
+  @IsNumber({ maxDecimalPlaces: 2 })
+  @IsPositive()
   @ApiProperty({ description: 'The price of a single product unit' })
   price: number;
 }
@@ -30,7 +36,8 @@ class PaymentInfoDto {
   @ApiProperty({ description: 'The payment method, e.g., "credit_card"' })
   method: string;
 
-  @IsNumber()
+  @IsNumber({ maxDecimalPlaces: 2 })
+  @IsPositive()
   @ApiProperty({ description: 'The total amount paid for the order' })
   amount: number;
 }
