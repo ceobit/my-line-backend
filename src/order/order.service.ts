@@ -28,7 +28,10 @@ export class OrderService {
 
   async createOrder(createOrderDto: CreateOrderDto): Promise<Order> {
     try {
-      const order = this.orderRepository.create(createOrderDto);
+      const order = this.orderRepository.create({
+        ...createOrderDto,
+        consentDate: createOrderDto.consentGiven ? new Date() : null,
+      });
       const savedOrder = await this.orderRepository.save(order);
       this.logger.log(`Order created: ${savedOrder.internalId}`);
       return savedOrder;

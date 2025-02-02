@@ -1,4 +1,5 @@
 import {
+  IsBoolean,
   IsEmail,
   IsEnum,
   IsNotEmpty,
@@ -102,4 +103,12 @@ export class CreateOrderDto {
     type: PaymentInfoDto,
   })
   paymentInfo?: PaymentInfoDto;
+
+  @IsBoolean()
+  @ApiProperty({ description: 'Whether the customer has given consent' })
+  consentGiven: boolean;
+
+  @IsOptional()
+  @ApiPropertyOptional({ description: 'The date when consent was given' })
+  consentDate?: Date;
 }

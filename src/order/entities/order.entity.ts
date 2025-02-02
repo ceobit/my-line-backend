@@ -51,6 +51,12 @@ export class Order {
   @JoinColumn()
   paymentInfo: PaymentInfo;
 
+  @Column({ default: false })
+  consentGiven: boolean;
+
+  @Column({ type: 'timestamp', nullable: true })
+  consentDate: Date;
+
   @CreateDateColumn()
   createdAt: Date;
 
