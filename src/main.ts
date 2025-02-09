@@ -18,6 +18,7 @@ async function bootstrap() {
   app.enableCors({
     origin: [
       'http://localhost:3000',
+      'https://localhost:3000',
       'https://www.my-line.app',
       'https://www.my-line.store',
     ],
