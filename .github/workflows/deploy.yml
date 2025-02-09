@@ -10,39 +10,33 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      # Step 1: Check out the repository
       - name: Checkout code
         uses: actions/checkout@v3
 
-      # Step 2: Set up Node.js
       - name: Set up Node.js
         uses: actions/setup-node@v3
         with:
-          node-version: 18 # Use the Node.js version your app requires
+          node-version: 18
 
-      # Step 3: Install dependencies and build
       - name: Install dependencies
         run: npm install
 
       - name: Build the app
         run: npm run build
 
-      # Step 4: Deploy to server via SSH
       - name: Deploy to Server
         uses: appleboy/ssh-action@v0.1.8
         with:
           host: ${{ secrets.SSH_HOST }}
           username: ${{ secrets.SSH_USER }}
           password: ${{ secrets.SSH_PASSWORD }}
-          port: 22 # Default SSH port
+          port: 22
           script: |
-            # Navigate to the app directory or clone the repo if it doesn't exist
             if [ ! -d "/var/www/my-line-backend" ]; then
               git clone git@github.com:ceobit/my-line-backend.git /var/www/my-line-backend
             fi
             cd /var/www/my-line-backend
 
-            # Pull the latest changes
             git reset --hard
             git pull origin main
 
@@ -52,12 +46,11 @@ jobs:
             echo "DB_USERNAME=${{ secrets.DB_USERNAME }}" >> .env
             echo "DB_PASSWORD=${{ secrets.DB_PASSWORD }}" >> .env
             echo "DB_NAME=${{ secrets.DB_NAME }}" >> .env
+            echo "JWT_SECRET=${{ secrets.JWT_SECRET }}" >> .env
 
-            # Install dependencies and build
             npm install
             npm run build
 
-            # Restart the app with PM2
             pm2 stop my-line-backend || true
             pm2 start dist/main.js --name my-line-backend
             pm2 save
