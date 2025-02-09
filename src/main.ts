@@ -31,6 +31,7 @@ async function bootstrap() {
     .setTitle('MY-LINE Backend API')
     .setDescription('The MY-LINE API description')
     .setVersion('1.0')
+    .addBearerAuth()
     .build();
   const document = SwaggerModule.createDocument(app, config);
   const swaggerJsonPath = './swagger.json';
