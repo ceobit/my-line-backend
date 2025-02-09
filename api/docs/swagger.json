@@ -1,0 +1,347 @@
+{
+  "openapi": "3.0.0",
+  "paths": {
+    "/api/products": {
+      "get": {
+        "operationId": "ProductController_getAllProducts",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "summary": "Get all products",
+        "tags": [
+          "Products"
+        ]
+      },
+      "post": {
+        "operationId": "ProductController_createProduct",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateProductDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": ""
+          }
+        },
+        "summary": "Create a new product",
+        "tags": [
+          "Products"
+        ]
+      }
+    },
+    "/api/products/{productId}": {
+      "get": {
+        "operationId": "ProductController_getProductById",
+        "parameters": [
+          {
+            "name": "productId",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "summary": "Get a product by ID",
+        "tags": [
+          "Products"
+        ]
+      },
+      "patch": {
+        "operationId": "ProductController_updateProduct",
+        "parameters": [
+          {
+            "name": "productId",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdateProductDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "summary": "Update a product by ID",
+        "tags": [
+          "Products"
+        ]
+      },
+      "delete": {
+        "operationId": "ProductController_deleteProduct",
+        "parameters": [
+          {
+            "name": "productId",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "summary": "Delete a product by ID",
+        "tags": [
+          "Products"
+        ]
+      }
+    },
+    "/api/products/name/{name}": {
+      "get": {
+        "operationId": "ProductController_getProductByName",
+        "parameters": [
+          {
+            "name": "name",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "summary": "Get a product by name",
+        "tags": [
+          "Products"
+        ]
+      }
+    },
+    "/api/products/slug/{slug}": {
+      "get": {
+        "operationId": "ProductController_getProductBySlug",
+        "parameters": [
+          {
+            "name": "slug",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "summary": "Get a product by slug",
+        "tags": [
+          "Products"
+        ]
+      }
+    },
+    "/api/products/find-many": {
+      "post": {
+        "operationId": "ProductController_getProductsByIds",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": ""
+          }
+        },
+        "summary": "Get multiple products by IDs",
+        "tags": [
+          "Products"
+        ]
+      }
+    }
+  },
+  "info": {
+    "title": "MY-LINE Backend API",
+    "description": "The MY-LINE API description",
+    "version": "1.0",
+    "contact": {}
+  },
+  "tags": [],
+  "servers": [],
+  "components": {
+    "schemas": {
+      "ProductImageDto": {
+        "type": "object",
+        "properties": {
+          "url": {
+            "type": "string",
+            "description": "URL of the image"
+          },
+          "alt": {
+            "type": "string",
+            "description": "Alt text for the image"
+          },
+          "isPrimary": {
+            "type": "boolean",
+            "description": "Indicates if this is the primary image",
+            "default": false
+          }
+        },
+        "required": [
+          "url"
+        ]
+      },
+      "ProductVariantDto": {
+        "type": "object",
+        "properties": {
+          "size": {
+            "type": "string",
+            "description": "size of the variant"
+          },
+          "color": {
+            "type": "string",
+            "description": "color of the variant"
+          },
+          "quantity": {
+            "type": "number",
+            "description": "quantity of the variant"
+          },
+          "images": {
+            "description": "Images associated with the product",
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/ProductImageDto"
+            }
+          }
+        },
+        "required": [
+          "size",
+          "color",
+          "quantity"
+        ]
+      },
+      "PackageDto": {
+        "type": "object",
+        "properties": {
+          "height": {
+            "type": "number",
+            "description": "Height of the package"
+          },
+          "length": {
+            "type": "number",
+            "description": "Length of the package"
+          },
+          "width": {
+            "type": "number",
+            "description": "Width of the package"
+          },
+          "weight": {
+            "type": "number",
+            "description": "Weight of the package"
+          }
+        }
+      },
+      "CreateProductDto": {
+        "type": "object",
+        "properties": {
+          "slug": {
+            "type": "string",
+            "description": "The slug of the product"
+          },
+          "name": {
+            "type": "string",
+            "description": "The name of the product"
+          },
+          "description": {
+            "type": "string",
+            "description": "The description of the product"
+          },
+          "price": {
+            "type": "number",
+            "description": "The price of the product"
+          },
+          "variants": {
+            "description": "The variants (size, color) of the product",
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/ProductVariantDto"
+            }
+          },
+          "vendorCode": {
+            "type": "string",
+            "description": "The vendor code of the product"
+          },
+          "composition": {
+            "type": "string",
+            "description": "The composition of the product"
+          },
+          "careInstructions": {
+            "type": "string",
+            "description": "The care instructions for the product"
+          },
+          "measurements": {
+            "type": "string",
+            "description": "Measurements of the product"
+          },
+          "modelParams": {
+            "type": "string",
+            "description": "Model parameters for the product"
+          },
+          "package": {
+            "description": "The delivery package dimensions and weight",
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/PackageDto"
+              }
+            ]
+          }
+        },
+        "required": [
+          "slug",
+          "name",
+          "description",
+          "price",
+          "variants"
+        ]
+      },
+      "UpdateProductDto": {
+        "type": "object",
+        "properties": {}
+      }
+    }
+  }
+}
